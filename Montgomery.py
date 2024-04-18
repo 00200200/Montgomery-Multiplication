@@ -1,53 +1,64 @@
 #        https://eduinf.waw.pl/inf/alg/001_search/0009.php Mozna samemu napisac wyzwanie XD ale dla testow i analizy pozyczam  
-def extendGCD(a,b):
-    u,w,x,z = 1,a,0,b
-    while w:
-        if w < z:
-            q = u
-            u = x
-            x = q
-            q = w
-            w = z
-            z = q
-        q = w // z
-        u -= q * x
-        w -= q * z
-    if z == 1:
-        if x < 0: x += b
-        return x
+# def extendGCD(a,b):
+#     u,w,x,z = 1,a,0,b
+#     while w:
+#         if w < z:
+#             q = u
+#             u = x
+#             x = q
+#             q = w
+#             w = z
+#             z = q
+#         q = w // z
+#         u -= q * x
+#         w -= q * z
+#     if z == 1:
+#         if x < 0: x += b
+#         return x
+#     else:
+#         print("BRAK")
+
+# GCD REKRURENCYJNIE 
+def extendGCD(a, b):
+    if a == 0:
+        return (b, 0, 1)
     else:
-        print("BRAK")
+        gcd, x, y = extendGCD(b % a, a)
+        return (gcd, y - (b // a) * x, x)
 
- 
-def montgomery():
-    A = int(input("Podaj A:"))
-    B = int(input("Podaj B:"))
-    N = int(input("Podaj N:"))
-    r = 2
-    while(r<N):
-        r *=2 
-    
-    am =  (A * r) % 17  # A W PRZESTRZENI MONTGOMERYEGO  WZOR A * R MOD N 
-    bm = (B * r) % 17  # B W PRZESTRZENI MONTGOMERYEGO WZOR B * R MOD N 
-    c = (am * bm)   # MNOZENIE W PRZESTRZENI MONTGOMERYEGO  WZOR : (WZOR A * R MOD N  ) * (WZOR B * R MOD N  ) ( NA WHITEBOARD ZMIENNA T )
-    a = N # POMOCNICZNA 
-    b = r  # POMOCNICZA 
-    rXD = extendGCD(a,b) # OBLICZANIE Z EUKLIDESA 
-    rXD = r - rXD # ODWROTNOSC R^-1 MOD N
-    nXD = extendGCD(b,a)
-    m = (c * rXD) % r
-    u = (c + m * N) // r
-    
+def montgomeryMultiplication(A, B, N):
 
+    R = 1 << (N.bit_length())  
 
-    result = (u * nXD) % N
-    print("WYNIK ALGORYTMU: ", result)
-    print(f"{A} MOD {B}  =  ", (A*B %N))
+    _, R_inv, _ = extendGCD(R, N)  
+    R_inv = R_inv % N # ODwrotnosc R 
 
-  
-montgomery()
+    # Montgomery Transformacja
+    AR = (A * R) % N
+    BR = (B * R) % N
+    T = (AR * BR) % N  # Mnozenie w przestrzeni Montgomery'ego
 
+    _, N_inv, _ = extendGCD(N, R)
+    N_inv = (-N_inv) % R    # Odwrotnosc N 
 
+    # Montgomery reudkcja
+    m = (T * N_inv) % R
+    U = (T + m * N) // R
+    # Upewaniamy się  czy U [0,N-1] znalazłem na wikipedii bez tego w niektórych przypadkach był błąd 
+    if U >= N:
+        U -= N
+    #MOntgomery transdformacja 
+    result = (U * R_inv) % N
+
+    return result
+
+# Example usage
+A = int(input("Podaj A: "))
+B = int(input("Podaj B: "))
+N = int(input("Podaj N(LICZBA PIERWSZA): "))
+result = montgomeryMultiplication(A, B, N)
+print("WYNIK ALGORYTMU:", result)
+print("WYNIK POPRAWNY", A * B % N)
 
 
 # https://www.nayuki.io/page/montgomery-reduction-algorithm
