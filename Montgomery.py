@@ -9,18 +9,18 @@ def extendGCD(a, b):
     
 
 def montgomeryMultiplication(A, B, N):
-
     R = 1 << (N.bit_length())  
     _, R_inv, _ = extendGCD(R, N)  
     R_inv = R_inv % N # ODwrotnosc R 
 
-    K = (R*(R_inv % N) -1)/N             # // N  ? 
+    K = (R*(R_inv % N) -1)//N             # // N  ? 
     am  = A*R % N 
     bm  = B*R % N
     X = am * bm
-    s = (X*K % R)
+    mask = R-1
+    s = (X*K)&mask
     t = X + s*N
-    u = t /R             # //N  ?
+    u = t //R             # //N  ?
     cc = u if u < N else u - N;
     c = cc*R_inv % N
     return c
