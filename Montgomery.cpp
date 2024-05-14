@@ -77,11 +77,9 @@ double montgomery_multipliaction_benchmark(ll n, ll a, ll b) {
     ll b_m = mr.convert_in(b);
     ll product;
     auto start = std::chrono::steady_clock::now();
-    for (ll i = 0; i < 2000000; i++) {
+    for (ll i = 0; i < 2000000; i++)
         product = mr.multiply(a_m, b_m);
-        product = mr.multiply(product, a_m);
-        product = mr.multiply(product, b_m);
-    }
+   
     auto end = std::chrono::steady_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
     ll ans = mr.convert_out(product);
@@ -91,18 +89,16 @@ double montgomery_multipliaction_benchmark(ll n, ll a, ll b) {
 double naive_solution_benchmark(ll n, ll a, ll b) {
     ll product;
     auto start = std::chrono::steady_clock::now();
-    for (ll i = 0; i < 2000000; i++) {
+    for (ll i = 0; i < 2000000; i++)
         product = (a * b) % n;
-        product = (product * a) % n;
-        product = (product * b) % n;
-    }
+    
     auto end = std::chrono::steady_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
     return (double)duration.count();
 }
 
 int main() {
-    ll n = 1e9+7;
+    ll n = 1e9 + 7;
     ll a = 12345678901234567;
     ll b = 67234888823623901;
 
@@ -110,7 +106,7 @@ int main() {
     for (int i = 0; i < num_of_benchmarks; i++) {
         m_sum = montgomery_multipliaction_benchmark(n, a, b);
         n_sum = naive_solution_benchmark(n, a, b);
-    }   
+    }
 
     std::cout << m_sum / num_of_benchmarks << "\n";
     std::cout << n_sum / num_of_benchmarks << "\n";
