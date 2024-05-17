@@ -71,7 +71,7 @@ ll MontgomeryReducer::multiply(ll value1, ll value2) {
     return u - mod;
 }
 
-double montgomery_multipliaction_benchmark(ll n, ll a, ll b) {
+double montgomery_multiplication_benchmark(ll n, ll a, ll b) {
     MontgomeryReducer mr = MontgomeryReducer(n);
     ll a_m = mr.convert_in(a);
     ll b_m = mr.convert_in(b);
@@ -104,7 +104,7 @@ int main() {
 
     double num_of_benchmarks = 100, m_sum = 0, n_sum = 0;
     for (int i = 0; i < num_of_benchmarks; i++) {
-        m_sum += montgomery_multipliaction_benchmark(n, a, b);
+        m_sum += montgomery_multiplication_benchmark(n, a, b);
         n_sum += naive_solution_benchmark(n, a, b);
     }
 
